@@ -1,2 +1,2 @@
 # python-ext-linklist
-基于python c/api的c实现的linklist扩展
+基于python c/api的c实现的linklist
