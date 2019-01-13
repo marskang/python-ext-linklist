@@ -70,6 +70,7 @@ void pyLinkList_append(PyLinkList_Node* self, PyObject* obj) {
         return;
     }
     Py_INCREF(self);
+    Py_INCREF(node);
     node->content = obj;
     node->next = NULL;
     self->tail->next = node;
@@ -85,6 +86,8 @@ PyObject* pyLinkList_getiter(PyLinkList_Node* self) {
 PyObject* pyLinkList_iternext(PyLinkList_Node* self) {
     PyLinkList_Node* next;
     if(!self->next || !self->cursor) {
+        //将游标重置
+        self->cursor = self;
         return NULL;
     }
     if (self == self->cursor) {
