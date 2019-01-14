@@ -5,7 +5,7 @@
 
 typedef struct PyLinkList_Node {
     PyObject_HEAD
-    unsigned long count;
+    Py_ssize_t count;
     PyObject* content;
     struct PyLinkList_Node* cursor;
     struct PyLinkList_Node* next;
@@ -17,6 +17,8 @@ void pyLinkList_dealloc(PyLinkList_Node* self);
 void pyLinkList_append(PyLinkList_Node* self, PyObject* obj);
 PyObject* pyLinkList_iternext(PyLinkList_Node* self);
 PyObject* pyLinkList_getiter(PyLinkList_Node* self);
-PyObject* pyLinkList_printall(PyLinkList_Node* self);
+void pyLinkList_printall(PyLinkList_Node* self);
+PyObject* pyLinkList_item(PyLinkList_Node* self, Py_ssize_t index);
+Py_ssize_t PyLinkList_count(PyLinkList_Node* self);
 
 #endif

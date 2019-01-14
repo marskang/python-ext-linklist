@@ -7,6 +7,19 @@ static PyMethodDef pyLinkList_methods[] = {
     {NULL},
 };
 
+static PySequenceMethods linklist_as_sequence = {
+    (lenfunc)PyLinkList_count,                       /* sq_length */
+    0,                                               /* sq_concat */
+    0,                                               /* sq_repeat */
+    (ssizeargfunc)pyLinkList_item,                         /* sq_item */
+    0,                                               /* sq_slice */
+    0,                                               /* sq_ass_item */
+    0,                                               /* sq_ass_slice */
+    0,                                               /* sq_contains */
+    0,                                               /* sq_inplace_concat */
+    0,                                               /* sq_inplace_repeat */
+};
+
 
 PyTypeObject pyLinkList_NodeType = {
         PyVarObject_HEAD_INIT(NULL, 0)
@@ -20,7 +33,7 @@ PyTypeObject pyLinkList_NodeType = {
         0,                                              /* tp_reserved */
         0,                                              /* tp_repr */
         0,                                              /* tp_as_number */
-        0,                                              /* tp_as_sequence */
+        &linklist_as_sequence,                          /* tp_as_sequence */
         0,                                              /* tp_as_mapping */
         0,                                              /* tp_hash */
         0,                                              /* tp_call */
@@ -50,6 +63,10 @@ PyTypeObject pyLinkList_NodeType = {
         0                                               /* tp_free */
 };
 
+Py_ssize_t PyLinkList_count(PyLinkList_Node* self) {
+    return self->count;
+}
+
 int pyLinkList_init(PyLinkList_Node* self) {
     self->count = 0;
     self->next = NULL;
@@ -59,9 +76,23 @@ int pyLinkList_init(PyLinkList_Node* self) {
     return 0;
 }
 
-
 void pyLinkList_dealloc(PyLinkList_Node* self) {
     printf("pyLinkList_dealloc 233\n");
+}
+
+PyObject* pyLinkList_item(PyLinkList_Node* self, Py_ssize_t index) {
+    Py_ssize_t start = 0;
+    //过滤头节点
+    PyLinkList_Node* p = self->next;
+    while(p) {
+        if (start == index) {
+            Py_INCREF(p->content);
+            return p->content;
+        }
+        p = p->next;
+        start++;
+    }
+    return NULL;
 }
 
 void pyLinkList_append(PyLinkList_Node* self, PyObject* obj) {
@@ -70,7 +101,7 @@ void pyLinkList_append(PyLinkList_Node* self, PyObject* obj) {
         return;
     }
     Py_INCREF(self);
-    Py_INCREF(node);
+    printf("self cnt:%ld\n", self->ob_refcnt);
     node->content = obj;
     node->next = NULL;
     self->tail->next = node;
@@ -101,10 +132,10 @@ PyObject* pyLinkList_iternext(PyLinkList_Node* self) {
     return next->content;
 }
 
-PyObject* pyLinkList_printall(PyLinkList_Node* self) {
+void pyLinkList_printall(PyLinkList_Node* self) {
     PyLinkList_Node* p = self;
     while(p) {
-        printf("%p\n", p);
+        printf("printall22:%ld\n", p->ob_refcnt);
         p = p->next;
     }
 }
