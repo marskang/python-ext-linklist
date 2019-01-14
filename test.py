@@ -1,20 +1,14 @@
+# -*- coding: utf-8 -*-
+
 import linklist
 
 l = linklist.LinkList()
-tt = "zhao"
-# l.append("zhao")
-# l.append(tt)
-# l.append(3)
-# l.append("jian")
-# l.append("gaga")
-print l[1]
-# for i in l:
-#     print i
-# l.printall()
-# print l
-# for i in l:
-#     print i
+l.append("张三")
+l.append("12")
+l.append(666)
 
-# print l
-# del l
-# print type(linklist)
+for i in l:
+    print i
+
+print len(l)
+print l[1]

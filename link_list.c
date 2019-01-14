@@ -3,7 +3,6 @@
 
 static PyMethodDef pyLinkList_methods[] = {
     {"append", (PyCFunction)pyLinkList_append, METH_O, "append item"},
-    {"printall", (PyCFunction)pyLinkList_printall, METH_NOARGS, "append item"},
     {NULL},
 };
 
@@ -11,7 +10,7 @@ static PySequenceMethods linklist_as_sequence = {
     (lenfunc)PyLinkList_count,                       /* sq_length */
     0,                                               /* sq_concat */
     0,                                               /* sq_repeat */
-    (ssizeargfunc)pyLinkList_item,                         /* sq_item */
+    (ssizeargfunc)pyLinkList_item,                   /* sq_item */
     0,                                               /* sq_slice */
     0,                                               /* sq_ass_item */
     0,                                               /* sq_ass_slice */
@@ -77,7 +76,15 @@ int pyLinkList_init(PyLinkList_Node* self) {
 }
 
 void pyLinkList_dealloc(PyLinkList_Node* self) {
-    printf("pyLinkList_dealloc 233\n");
+    //内存回收
+    PyLinkList_Node* p = self->next;
+    PyLinkList_Node* q = NULL;
+    while(p) {
+        q = p->next;
+        Py_XDECREF(p);
+        p = q;
+    }
+    Py_CLEAR(self);
 }
 
 static PyObject *indexerr = NULL;
@@ -85,11 +92,11 @@ static PyObject *indexerr = NULL;
 PyObject* pyLinkList_item(PyLinkList_Node* self, Py_ssize_t index) {
     if (index < 0 || index >= self->count) {
         if (indexerr == NULL) {
-            indexerr = PyString_FromString(
-                "link list index out of range");
+            indexerr = PyString_FromString("link list index out of range");
             if (indexerr == NULL)
                 return NULL;
         }
+        //返回数组越界异常
         PyErr_SetObject(PyExc_IndexError, indexerr);
         return NULL;
     }
@@ -113,7 +120,7 @@ void pyLinkList_append(PyLinkList_Node* self, PyObject* obj) {
         return;
     }
     Py_INCREF(self);
-    printf("self cnt:%ld\n", self->ob_refcnt);
+    Py_INCREF(self->content);
     node->content = obj;
     node->next = NULL;
     self->tail->next = node;
@@ -142,14 +149,6 @@ PyObject* pyLinkList_iternext(PyLinkList_Node* self) {
     }
     self->cursor = self->cursor->next;
     return next->content;
-}
-
-void pyLinkList_printall(PyLinkList_Node* self) {
-    PyLinkList_Node* p = self;
-    while(p) {
-        printf("printall22:%ld\n", p->ob_refcnt);
-        p = p->next;
-    }
 }
 
 static PyMethodDef pyLinkList_module_methods[] = {
