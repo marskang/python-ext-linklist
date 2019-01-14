@@ -7,7 +7,7 @@ tt = "zhao"
 # l.append(3)
 # l.append("jian")
 # l.append("gaga")
-print len(l)
+print l[1]
 # for i in l:
 #     print i
 # l.printall()

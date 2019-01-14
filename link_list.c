@@ -80,7 +80,19 @@ void pyLinkList_dealloc(PyLinkList_Node* self) {
     printf("pyLinkList_dealloc 233\n");
 }
 
+static PyObject *indexerr = NULL;
+
 PyObject* pyLinkList_item(PyLinkList_Node* self, Py_ssize_t index) {
+    if (index < 0 || index >= self->count) {
+        if (indexerr == NULL) {
+            indexerr = PyString_FromString(
+                "link list index out of range");
+            if (indexerr == NULL)
+                return NULL;
+        }
+        PyErr_SetObject(PyExc_IndexError, indexerr);
+        return NULL;
+    }
     Py_ssize_t start = 0;
     //过滤头节点
     PyLinkList_Node* p = self->next;
